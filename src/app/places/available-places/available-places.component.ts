@@ -4,7 +4,7 @@ import {Place} from '../place.model';
 import {PlacesComponent} from '../places.component';
 import {PlacesContainerComponent} from '../places-container/places-container.component';
 import {HttpClient} from "@angular/common/http";
-import {catchError, map, pipe, throwError} from "rxjs";
+import {catchError, map,throwError} from "rxjs";
 
 @Component({
     selector: 'app-available-places',
@@ -20,7 +20,7 @@ export class AvailablePlacesComponent implements OnInit {
     private httpClient = inject(HttpClient);
 
     ngOnInit() {
-        const subscription = this.httpClient.get<{ places: Place[] }>('http://localhost:3000/places')
+        this.httpClient.get<{ places: Place[] }>('http://localhost:3000/places')
             .pipe(map(responseData =>
                 responseData.places),catchError((error)=>throwError(()=>new Error('Something went wrong ! ')))).subscribe({
                 next: (places) => {
@@ -34,5 +34,12 @@ export class AvailablePlacesComponent implements OnInit {
                 }
             });
 
+    }
+    onSelectPlace(selectedPlace: Place) {
+        this.httpClient.put('http://localhost:3000/user-places/', {
+            placeId: selectedPlace.id,
+        }).subscribe({
+            next:(resData)=>console.log(resData),
+        });
     }
 }
