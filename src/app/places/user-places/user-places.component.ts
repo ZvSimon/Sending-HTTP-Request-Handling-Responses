@@ -17,7 +17,6 @@ import {catchError, map, throwError} from "rxjs";
 export class UserPlacesComponent implements OnInit{
   private destroyRef =inject(DestroyRef) ;
   private placeService: PlacesService = inject(PlacesService);
-  private httpClient = inject(HttpClient);
   isFetching = signal<boolean>(true);
   places = this.placeService.loadedUserPlaces;
   error = signal('');
@@ -36,6 +35,14 @@ export class UserPlacesComponent implements OnInit{
       subscription.unsubscribe()
     })
 
+  }
+  onDeleteUserPlaces(place: Place) {
+    const subscription = this.placeService.removeUserPlace(place).subscribe({
+      next: (resData) => console.log(resData),
+    });
+    this.destroyRef.onDestroy(() => {
+      subscription.unsubscribe();
+    });
   }
 
 }
